@@ -36,7 +36,6 @@ function closeModal() {
   openAddBtn.focus();
 }
 
-// Lista: clic = seleccionar / deseleccionar, doble clic = eliminar ese item
 const idFrom = (event) => {
   const li = event.target.closest(".list__item");
   return li ? Number(li.dataset.id) : null;
@@ -75,7 +74,6 @@ undoBtn.addEventListener("click", () => {
   render();
 });
 
-// Modal
 openAddBtn.addEventListener("click", openModal);
 cancelBtn.addEventListener("click", closeModal);
 overlay.addEventListener("click", (event) => {
@@ -90,7 +88,7 @@ input.addEventListener("input", () => {
 });
 
 form.addEventListener("submit", (event) => {
-  event.preventDefault(); // Enter en el input también añade
+  event.preventDefault();
   if (addItem(input.value)) {
     render();
     closeModal();

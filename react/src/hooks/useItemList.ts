@@ -6,7 +6,6 @@ export interface ListItem {
   selected: boolean;
 }
 
-// Misma lógica que vanilla/js/state.js: items + pila de historial para deshacer.
 export function useItemList(initialTexts: string[]) {
   const nextId = useRef(initialTexts.length + 1);
   const [items, setItems] = useState<ListItem[]>(() =>

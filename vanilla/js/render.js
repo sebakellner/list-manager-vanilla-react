@@ -1,5 +1,3 @@
-// Pinta el estado en el DOM. Se usa textContent (nunca innerHTML) para evitar inyección de HTML.
-
 export function renderList(listEl, items) {
   // Conserva los nodos para no interrumpir el doble clic ni perder el foco.
   const existing = new Map(

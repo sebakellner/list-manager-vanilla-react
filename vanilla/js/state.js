@@ -1,6 +1,3 @@
-// Estado centralizado + historial para deshacer.
-// Cada cambio de contenido (añadir / eliminar) guarda una copia previa en `history`.
-
 let items = ["Item 1", "Item 2", "Item 3", "Item 4"].map((text, i) => ({
   id: i + 1,
   text,

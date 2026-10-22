@@ -24,7 +24,7 @@ export default function AddModal({ onAdd, onClose }: AddModalProps) {
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Enter en el input también añade
+    e.preventDefault();
     if (onAdd(text)) closeModal();
   };
 
