@@ -1,0 +1,14 @@
+{
+  "name": "text-list-manager",
+  "private": true,
+  "packageManager": "pnpm@12.14.0",
+  "scripts": {
+    "dev:vanilla": "serve . --config serve.json --listen tcp://127.0.0.1:3000 --no-clipboard",
+    "dev:react": "pnpm --filter technical-proof-react dev",
+    "build": "pnpm --filter technical-proof-react build",
+    "typecheck": "pnpm --filter technical-proof-react typecheck"
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
+  }
+}
