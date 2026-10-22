@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Technical proof</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../shared/styles.css" />
+  </head>
+  <body>
+    <main class="card">
+      <h1>This is a technical proof</h1>
+      <p class="intro">
+        Lorem ipsum dolor sit amet consectetur adipiscing, elit mus primis nec
+        inceptos. Lacinia habitasse arcu molestie maecenas cursus quam nunc,
+        hendrerit posuere augue fames dictumst placerat porttitor, dis mi
+        pharetra vestibulum venenatis phasellus.
+      </p>
+
+      <ul
+        id="list"
+        class="list"
+        role="listbox"
+        aria-label="Items"
+        aria-multiselectable="true"
+      ></ul>
+
+      <div class="actions">
+        <div class="actions__group">
+          <button
+            id="undo-btn"
+            class="btn btn--icon"
+            type="button"
+            aria-label="Undo last change"
+            title="Undo"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+              <path d="M3 3v5h5" />
+            </svg>
+          </button>
+          <button id="delete-btn" class="btn" type="button">Delete</button>
+        </div>
+        <button id="open-add-btn" class="btn btn--primary" type="button">
+          Add
+        </button>
+      </div>
+    </main>
+
+    <dialog id="overlay" class="overlay" aria-labelledby="modal-title">
+      <div class="modal">
+        <form id="add-form" autocomplete="off">
+          <label id="modal-title" class="modal__title" for="item-input"
+            >Add item to list</label
+          >
+          <input
+            id="item-input"
+            class="field"
+            type="text"
+            placeholder="Type the text here..."
+            autofocus
+          />
+          <div class="modal__actions">
+            <button
+              id="confirm-btn"
+              class="btn btn--primary"
+              type="submit"
+              disabled
+            >
+              Add
+            </button>
+            <button id="cancel-btn" class="btn" type="button">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>
