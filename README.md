@@ -45,9 +45,8 @@ Use the URL printed in the terminal if the default port is occupied. Press
 Ctrl+C to stop the server. To compare both versions, run each command in a
 separate terminal.
 
-The Vanilla server redirects `/` to `/vanilla/` and serves the repository root
-so that the shared stylesheet remains accessible. Because Vanilla uses ES
-modules, open it through the server rather than `file://`.
+Vanilla uses ES modules; run it with `pnpm dev:vanilla` rather than opening the
+HTML file directly.
 
 ### Type checking and build
 
@@ -86,20 +85,26 @@ the `vanilla/` and `shared/` directories alongside each other.
   smaller screens and enlarged text can expand the layout without fixing the
   card height.
 
-## Accessibility considerations
+## Accessibility
 
-Both versions provide input labels, accessible button names, selection states,
-and visible keyboard focus. Items can be reached with Tab and selected with
-Space or Enter.
+Both implementations include:
 
-The native `<dialog>` focuses the input, prevents focus from moving into the
-background, and restores focus to Add when closed. The input border follows
-XD (`#CCCCCC`), while the focus ring uses the primary color. The placeholder
-uses the text color for readability. The unfocused input border remains below
-the 3:1 non-text contrast threshold.
+- **Keyboard support:** Tab reaches the controls and list items; Space or Enter
+  toggles item selection.
+- **Labels and states:** the input has an associated label, buttons have
+  accessible names, and list items expose their selection through `aria-selected`.
+- **Modal focus management:** the native `<dialog>` focuses the input, keeps
+  focus out of the background, and returns it to Add when closed. Escape and
+  Cancel dismiss the dialog.
+- **Visible focus:** controls and list items use a primary-color focus ring.
+  Placeholder text uses the body text color for readability.
+- **Reduced motion:** focus and hover transitions do not move or resize
+  controls and are disabled when `prefers-reduced-motion: reduce` is enabled.
 
-Focus and hover transitions use short motion tokens without moving or resizing
-controls. They are disabled when `prefers-reduced-motion: reduce` is enabled.
+### Known limitations
 
-Arrow-key navigation for the listbox pattern is not implemented. These
-measures are not a claim of full WCAG conformance.
+- The input border preserves XD's `#CCCCCC`, which falls below the 3:1
+  non-text contrast threshold when unfocused.
+- Listbox navigation uses Tab; arrow-key navigation is not implemented.
+
+These features do not constitute a claim of full WCAG conformance.

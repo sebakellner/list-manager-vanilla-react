@@ -5,14 +5,18 @@
   --color-text-placeholder: var(--color-text);
   --color-surface: #fff;
   --color-surface-subtle: #f7f7f7;
-  --color-surface-hover: var(--color-surface);
+  --color-surface-hover: color-mix(
+    in srgb,
+    var(--color-surface-subtle) 94%,
+    var(--color-text)
+  );
   --color-border: #cccccc;
   --color-border-control: var(--color-border);
   --color-background-start: #a1c4fd;
   --color-background-end: #c2e9fb;
   --color-focus-ring: var(--color-primary);
   --color-shadow: #0000001f;
-  --color-backdrop: var(--color-shadow);
+  --color-backdrop: #0000001a;
 
   --font-family-body: "Montserrat", system-ui, sans-serif;
   --font-size-body: 1.125rem;
