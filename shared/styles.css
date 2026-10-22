@@ -1,5 +1,15 @@
 :root {
   --color-primary: #324bff;
+  --color-primary-hover: color-mix(
+    in srgb,
+    var(--color-primary) 90%,
+    var(--color-text)
+  );
+  --color-button-outline-hover: color-mix(
+    in srgb,
+    var(--color-primary) 6%,
+    var(--color-surface)
+  );
   --color-text: #333333;
   --color-text-inverse: #fff;
   --color-text-placeholder: var(--color-text);
@@ -73,7 +83,7 @@ body {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: var(--space-171) var(--space-24) var(--space-24);
+  padding: clamp(var(--space-24), 16vh, var(--space-171)) var(--space-24);
   font-family: var(--font-family-body);
   font-size: var(--font-size-body);
   font-weight: var(--font-weight-regular);
@@ -195,8 +205,8 @@ h1 {
   border: 1px solid var(--color-primary);
   border-radius: var(--radius-button);
   cursor: pointer;
-  transition-property: outline-color, filter;
-  transition-duration: var(--motion-duration-normal);
+  transition-property: outline-color, background-color;
+  transition-duration: var(--motion-duration-normal), var(--motion-duration-fast);
 }
 .btn--primary {
   min-width: var(--size-button-primary-width);
@@ -212,8 +222,11 @@ h1 {
   opacity: 0.4;
   cursor: not-allowed;
 }
-.btn:not(:disabled):hover {
-  filter: brightness(0.93);
+.btn:not(.btn--primary):not(:disabled):hover {
+  background: var(--color-button-outline-hover);
+}
+.btn--primary:not(:disabled):hover {
+  background: var(--color-primary-hover);
 }
 
 /* Modal */
