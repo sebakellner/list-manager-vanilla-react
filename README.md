@@ -3,7 +3,10 @@
 A front-end coding challenge implemented in **Vanilla JavaScript** and
 **React + TypeScript**, with the same functionality and shared styles.
 
-Based on the supplied [Adobe XD design](https://xd.adobe.com/view/ea696dd0-8781-4460-8720-36deb2d19b2a-bf3a/specs/).
+## Preview
+
+![List manager general view](./.github/assets/list-manager.png)
+![AddItem Dialog](./.github/assets/add-modal.png)
 
 ## Features
 
@@ -33,10 +36,10 @@ pnpm install
 
 ### Development
 
-| Version | Command | Default URL |
-| --- | --- | --- |
+| Version | Command            | Default URL            |
+| ------- | ------------------ | ---------------------- |
 | Vanilla | `pnpm dev:vanilla` | http://127.0.0.1:3000/ |
-| React | `pnpm dev:react` | http://localhost:5173/ |
+| React   | `pnpm dev:react`   | http://localhost:5173/ |
 
 Use the URL printed in the terminal if the default port is occupied. Press
 Ctrl+C to stop the server. To compare both versions, run each command in a
