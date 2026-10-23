@@ -8,7 +8,9 @@ import {
 } from "./state.js";
 import { renderList, renderControls } from "./render.js";
 
-const $ = (selector) => document.querySelector(selector);
+function $(selector) {
+  return document.querySelector(selector);
+}
 const listEl = $("#list");
 const undoBtn = $("#undo-btn");
 const deleteBtn = $("#delete-btn");
@@ -37,26 +39,26 @@ function closeModal() {
   openAddBtn.focus();
 }
 
-const idFrom = (event) => {
+function idFrom(event) {
   const li = event.target.closest(".list__item");
-  return li ? Number(li.dataset.id) : null;
-};
+  return li ? li.dataset.id : null;
+}
 
-listEl.addEventListener("click", (event) => {
+function handleItemClick(event) {
   const id = idFrom(event);
   if (id === null) return;
   toggleItem(id);
   render();
-});
+}
 
-listEl.addEventListener("dblclick", (event) => {
+function handleItemDoubleClick(event) {
   const id = idFrom(event);
   if (id === null) return;
   deleteItem(id);
   render();
-});
+}
 
-listEl.addEventListener("keydown", (event) => {
+function handleItemKeyDown(event) {
   if (event.key !== " " && event.key !== "Enter") return;
   const id = idFrom(event);
   if (id === null) return;
@@ -64,31 +66,32 @@ listEl.addEventListener("keydown", (event) => {
   toggleItem(id);
   render();
   listEl.querySelector(`[data-id="${id}"]`)?.focus();
-});
+}
 
-deleteBtn.addEventListener("click", () => {
+function handleDeleteSelected() {
   deleteSelected();
   render();
-});
-undoBtn.addEventListener("click", () => {
+}
+
+function handleUndo() {
   undo();
   render();
-});
+}
 
-openAddBtn.addEventListener("click", openModal);
-cancelBtn.addEventListener("click", closeModal);
-overlay.addEventListener("click", (event) => {
+function handleOverlayClick(event) {
   if (event.target === overlay) closeModal();
-});
-overlay.addEventListener("cancel", (event) => {
+}
+
+function handleModalCancel(event) {
   event.preventDefault();
   closeModal();
-});
-input.addEventListener("input", () => {
-  confirmBtn.disabled = isSubmitting || input.value.trim() === "";
-});
+}
 
-form.addEventListener("submit", (event) => {
+function handleInput() {
+  confirmBtn.disabled = isSubmitting || input.value.trim() === "";
+}
+
+function handleSubmit(event) {
   event.preventDefault();
   if (isSubmitting || !overlay.open) return;
 
@@ -103,6 +106,18 @@ form.addEventListener("submit", (event) => {
     isSubmitting = false;
     confirmBtn.disabled = !overlay.open || input.value.trim() === "";
   }
-});
+}
+
+listEl.addEventListener("click", handleItemClick);
+listEl.addEventListener("dblclick", handleItemDoubleClick);
+listEl.addEventListener("keydown", handleItemKeyDown);
+deleteBtn.addEventListener("click", handleDeleteSelected);
+undoBtn.addEventListener("click", handleUndo);
+openAddBtn.addEventListener("click", openModal);
+cancelBtn.addEventListener("click", closeModal);
+overlay.addEventListener("click", handleOverlayClick);
+overlay.addEventListener("cancel", handleModalCancel);
+input.addEventListener("input", handleInput);
+form.addEventListener("submit", handleSubmit);
 
 render();

@@ -119,6 +119,11 @@ For headed mode, run `pnpm test:e2e --headed`.
 - **State and undo:** additions and deletions save a snapshot of the items and
   their selection. Selection changes alone do not create history entries.
   Deleting an unknown ID does not create an entry either.
+- **Item IDs:** both implementations use `crypto.randomUUID()` for initial
+  and added items. IDs are strings and remain unchanged when undoing changes.
+- **React list API:** `addItem` returns `void`, like the other list mutations.
+  The form validates blank input before calling it and closes after completion,
+  without relying on a boolean result.
 - **Rendering:** Vanilla reuses list nodes to preserve focus and double-click
   behavior. Text is rendered with `textContent`; React uses its default escaping.
 - **React components:** a reusable Button supports outline, primary, and icon
@@ -129,8 +134,10 @@ For headed mode, run `pnpm test:e2e --headed`.
   Add while pending through a small SubmitButton inside the form, plus a ref
   guard for repeated submit events. Vanilla
   disables Add and guards its synchronous submit handler with a flag.
-  Rejected additions leave the dialog open for another attempt; no artificial
-  delays are introduced.
+  React displays submission errors and preserves the input for retrying.
+  No artificial delays are introduced.
+- **Vanilla callbacks:** event listeners and array callbacks use named
+  functions to make their purpose and stack traces easier to identify.
 - **Design:** CSS tokens group colors, typography, spacing, radii, shadows,
   dimensions, and motion durations/easing. Desktop measurements follow XD;
   smaller screens and enlarged text can expand the layout without fixing the
