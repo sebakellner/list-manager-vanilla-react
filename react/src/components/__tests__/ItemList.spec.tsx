@@ -5,8 +5,8 @@ import type { ListItem } from "../../hooks/useItemList";
 import ItemList from "../ItemList";
 
 const items: ListItem[] = [
-  { id: 1, text: "First item", selected: false },
-  { id: 2, text: "Second item", selected: true },
+  { id: crypto.randomUUID(), text: "First item", selected: false },
+  { id: crypto.randomUUID(), text: "Second item", selected: true },
 ];
 
 function setup() {
@@ -37,10 +37,10 @@ describe("ItemList", () => {
 
     const firstItem = screen.getByRole("option", { name: "First item" });
     await user.click(firstItem);
-    expect(onToggle).toHaveBeenLastCalledWith(1);
+    expect(onToggle).toHaveBeenLastCalledWith(items[0]?.id);
 
     await user.keyboard("{Enter}");
-    expect(onToggle).toHaveBeenLastCalledWith(1);
+    expect(onToggle).toHaveBeenLastCalledWith(items[0]?.id);
 
     await user.keyboard(" ");
     expect(onToggle).toHaveBeenCalledTimes(3);
@@ -52,6 +52,6 @@ describe("ItemList", () => {
     await user.dblClick(screen.getByRole("option", { name: "Second item" }));
 
     expect(onDelete).toHaveBeenCalledOnce();
-    expect(onDelete).toHaveBeenCalledWith(2);
+    expect(onDelete).toHaveBeenCalledWith(items[1]?.id);
   });
 });

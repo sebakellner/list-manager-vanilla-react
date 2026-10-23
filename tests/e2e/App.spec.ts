@@ -92,4 +92,29 @@ test.describe("App", () => {
     await expect(addedItem).toHaveCount(1);
     await expect(list.getByRole("option")).toHaveCount(5);
   });
+
+  test("should preserve keyboard focus and support double-click deletion with string ids", async ({ page }) => {
+    const { list, undoButton } = await setup(page);
+    const text = await list.getByRole("option").first().innerText();
+    const item = list.getByRole("option", { name: text, exact: true });
+
+    await item.focus();
+    await item.press("Space");
+    await expect(item).toHaveAttribute("aria-selected", "true");
+    await expect(item).toBeFocused();
+
+    await item.press("Enter");
+    await expect(item).toHaveAttribute("aria-selected", "false");
+    await expect(item).toBeFocused();
+    await expect(undoButton).toBeDisabled();
+
+    await item.dblclick();
+    await expect(item).toHaveCount(0);
+    await expect(list.getByRole("option")).toHaveCount(3);
+
+    await undoButton.click();
+    await expect(item).toBeVisible();
+    await expect(list.getByRole("option")).toHaveCount(4);
+    await expect(undoButton).toBeDisabled();
+  });
 });

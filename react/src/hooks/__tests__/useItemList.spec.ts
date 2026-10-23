@@ -1,21 +1,48 @@
 import { act, renderHook } from "@testing-library/react";
-import { describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, expectTypeOf, test, vi } from "vitest";
 import { useItemList } from "../useItemList";
+
+const FIRST_ID = "00000000-0000-4000-8000-000000000001";
+const SECOND_ID = "00000000-0000-4000-8000-000000000002";
+const THIRD_ID = "00000000-0000-4000-8000-000000000003";
+const UNKNOWN_ID = "00000000-0000-4000-8000-000000000999";
 
 function setup(initialTexts = ["First item", "Second item"]) {
   return renderHook(() => useItemList(initialTexts));
 }
 
 describe("useItemList", () => {
+  beforeEach(() => {
+    vi.spyOn(crypto, "randomUUID")
+      .mockReturnValueOnce(FIRST_ID)
+      .mockReturnValueOnce(SECOND_ID)
+      .mockReturnValueOnce(THIRD_ID);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   test("should initialize unselected items with unique ids and no history", () => {
     const { result } = setup();
 
     expect(result.current.items).toEqual([
-      { id: 1, text: "First item", selected: false },
-      { id: 2, text: "Second item", selected: false },
+      { id: FIRST_ID, text: "First item", selected: false },
+      { id: SECOND_ID, text: "Second item", selected: false },
     ]);
+    expect(crypto.randomUUID).toHaveBeenCalledTimes(2);
     expect(result.current.hasSelection).toBe(false);
     expect(result.current.canUndo).toBe(false);
+  });
+
+  test("should preserve initial UUIDs across rerenders without generating new ids", () => {
+    const { result, rerender } = setup();
+    const initialItems = result.current.items;
+
+    rerender();
+
+    expect(result.current.items).toEqual(initialItems);
+    expect(crypto.randomUUID).toHaveBeenCalledTimes(2);
   });
 
   test("should support an empty initial list and undo its first addition", () => {
@@ -30,7 +57,7 @@ describe("useItemList", () => {
     });
 
     expect(result.current.items).toEqual([
-      { id: 1, text: "First item", selected: false },
+      { id: FIRST_ID, text: "First item", selected: false },
     ]);
 
     act(() => {
@@ -41,18 +68,20 @@ describe("useItemList", () => {
     expect(result.current.canUndo).toBe(false);
   });
 
-  test("should trim added text, return success, and enable undo", () => {
+  test("should trim added text, return void, and enable undo", () => {
     const { result } = setup();
+    expectTypeOf(result.current.addItem).returns.toBeVoid();
 
     act(() => {
-      expect(result.current.addItem("  New item  ")).toBe(true);
+      expect(result.current.addItem("  New item  ")).toBeUndefined();
     });
 
     expect(result.current.items).toEqual([
-      { id: 1, text: "First item", selected: false },
-      { id: 2, text: "Second item", selected: false },
-      { id: 3, text: "New item", selected: false },
+      { id: FIRST_ID, text: "First item", selected: false },
+      { id: SECOND_ID, text: "Second item", selected: false },
+      { id: THIRD_ID, text: "New item", selected: false },
     ]);
+    expect(crypto.randomUUID).toHaveBeenCalledTimes(3);
     expect(result.current.hasSelection).toBe(false);
     expect(result.current.canUndo).toBe(true);
   });
@@ -64,17 +93,18 @@ describe("useItemList", () => {
       const initialItems = result.current.items;
 
       act(() => {
-        expect(result.current.addItem(text)).toBe(false);
+        expect(result.current.addItem(text)).toBeUndefined();
       });
 
       expect(result.current.items).toEqual(initialItems);
       expect(result.current.canUndo).toBe(false);
+      expect(crypto.randomUUID).toHaveBeenCalledTimes(2);
 
       act(() => {
         result.current.addItem("Valid item");
       });
 
-      expect(result.current.items.at(-1)?.id).toBe(3);
+      expect(result.current.items.at(-1)?.id).toBe(THIRD_ID);
     },
   );
 
@@ -82,30 +112,30 @@ describe("useItemList", () => {
     const { result } = setup();
 
     act(() => {
-      result.current.toggleItem(1);
+      result.current.toggleItem(FIRST_ID);
     });
 
     expect(result.current.items).toEqual([
-      { id: 1, text: "First item", selected: true },
-      { id: 2, text: "Second item", selected: false },
+      { id: FIRST_ID, text: "First item", selected: true },
+      { id: SECOND_ID, text: "Second item", selected: false },
     ]);
     expect(result.current.hasSelection).toBe(true);
 
     act(() => {
-      result.current.toggleItem(2);
+      result.current.toggleItem(SECOND_ID);
     });
     act(() => {
-      result.current.toggleItem(1);
+      result.current.toggleItem(FIRST_ID);
     });
 
     expect(result.current.items).toEqual([
-      { id: 1, text: "First item", selected: false },
-      { id: 2, text: "Second item", selected: true },
+      { id: FIRST_ID, text: "First item", selected: false },
+      { id: SECOND_ID, text: "Second item", selected: true },
     ]);
     expect(result.current.hasSelection).toBe(true);
 
     act(() => {
-      result.current.toggleItem(2);
+      result.current.toggleItem(SECOND_ID);
     });
 
     expect(result.current.hasSelection).toBe(false);
@@ -116,8 +146,8 @@ describe("useItemList", () => {
     const { result } = setup(["First item", "Second item", "Third item"]);
 
     act(() => {
-      result.current.toggleItem(1);
-      result.current.toggleItem(3);
+      result.current.toggleItem(FIRST_ID);
+      result.current.toggleItem(THIRD_ID);
     });
     const selectedItems = result.current.items;
 
@@ -126,7 +156,7 @@ describe("useItemList", () => {
     });
 
     expect(result.current.items).toEqual([
-      { id: 2, text: "Second item", selected: false },
+      { id: SECOND_ID, text: "Second item", selected: false },
     ]);
     expect(result.current.hasSelection).toBe(false);
     expect(result.current.canUndo).toBe(true);
@@ -144,11 +174,11 @@ describe("useItemList", () => {
     const { result } = setup();
 
     act(() => {
-      result.current.deleteItem(1);
+      result.current.deleteItem(FIRST_ID);
     });
 
     expect(result.current.items).toEqual([
-      { id: 2, text: "Second item", selected: false },
+      { id: SECOND_ID, text: "Second item", selected: false },
     ]);
     expect(result.current.canUndo).toBe(true);
   });
@@ -160,7 +190,7 @@ describe("useItemList", () => {
       const initialItems = result.current.items;
 
       act(() => {
-        result.current[action](999);
+        result.current[action](UNKNOWN_ID);
       });
 
       expect(result.current.items).toEqual(initialItems);
@@ -194,7 +224,7 @@ describe("useItemList", () => {
     const itemsAfterAddition = result.current.items;
 
     act(() => {
-      result.current.deleteItem(1);
+      result.current.deleteItem(FIRST_ID);
     });
     act(() => {
       result.current.undo();
@@ -220,7 +250,7 @@ describe("useItemList", () => {
     });
     act(() => {
       result.current.addItem(" ");
-      result.current.deleteItem(999);
+      result.current.deleteItem(UNKNOWN_ID);
       result.current.deleteSelected();
     });
     act(() => {
@@ -231,20 +261,20 @@ describe("useItemList", () => {
     expect(result.current.canUndo).toBe(false);
   });
 
-  test("should keep ids increasing after deletion and undo", () => {
+  test("should generate a fresh UUID after deletion and undo without reusing ids", () => {
     const { result } = setup([]);
 
     act(() => {
       result.current.addItem("First item");
     });
     act(() => {
-      result.current.deleteItem(1);
+      result.current.deleteItem(FIRST_ID);
     });
     act(() => {
       result.current.addItem("Second item");
     });
 
-    expect(result.current.items.at(-1)?.id).toBe(2);
+    expect(result.current.items.at(-1)?.id).toBe(SECOND_ID);
 
     act(() => {
       result.current.undo();
@@ -254,7 +284,8 @@ describe("useItemList", () => {
     });
 
     expect(result.current.items).toEqual([
-      { id: 3, text: "Third item", selected: false },
+      { id: THIRD_ID, text: "Third item", selected: false },
     ]);
+    expect(crypto.randomUUID).toHaveBeenCalledTimes(3);
   });
 });

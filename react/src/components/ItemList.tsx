@@ -2,8 +2,8 @@ import type { ListItem } from "../hooks/useItemList";
 
 interface ItemListProps {
   items: ListItem[];
-  onToggle: (id: number) => void;
-  onDelete: (id: number) => void;
+  onToggle: (id: ListItem["id"]) => void;
+  onDelete: (id: ListItem["id"]) => void;
 }
 
 export default function ItemList({ items, onToggle, onDelete }: ItemListProps) {
