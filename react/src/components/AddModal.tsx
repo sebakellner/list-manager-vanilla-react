@@ -4,7 +4,7 @@ import { useFormStatus } from "react-dom";
 import Button from "./Button";
 
 interface AddModalProps {
-  onAdd: (text: string) => boolean | Promise<boolean>;
+  onAdd: (text: string) => void | Promise<void>;
   onClose: () => void;
 }
 
@@ -20,6 +20,7 @@ function SubmitButton({ disabled }: { disabled: boolean }) {
 
 export default function AddModal({ onAdd, onClose }: AddModalProps) {
   const [text, setText] = useState("");
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const submittingRef = useRef(false);
 
@@ -44,8 +45,13 @@ export default function AddModal({ onAdd, onClose }: AddModalProps) {
   };
 
   const handleSubmit = async () => {
+    setSubmitError(null);
     try {
-      if ((await onAdd(text)) && dialogRef.current?.open) closeModal();
+      await onAdd(text);
+      if (dialogRef.current?.open) closeModal();
+    } catch (error) {
+      if (!(error instanceof Error)) throw error;
+      setSubmitError(error.message || "Unable to add the item. Please try again.");
     } finally {
       submittingRef.current = false;
     }
@@ -80,6 +86,7 @@ export default function AddModal({ onAdd, onClose }: AddModalProps) {
             onChange={(e) => setText(e.target.value)}
             autoFocus
           />
+          {submitError && <p role="alert">{submitError}</p>}
           <div className="modal__actions">
             <SubmitButton disabled={text.trim() === ""} />
             <Button onClick={closeModal}>Cancel</Button>

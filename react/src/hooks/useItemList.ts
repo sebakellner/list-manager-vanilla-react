@@ -1,15 +1,14 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 export interface ListItem {
-  id: number;
+  id: string;
   text: string;
   selected: boolean;
 }
 
 export function useItemList(initialTexts: string[]) {
-  const nextId = useRef(initialTexts.length + 1);
   const [items, setItems] = useState<ListItem[]>(() =>
-    initialTexts.map((text, i) => ({ id: i + 1, text, selected: false }))
+    initialTexts.map((text) => ({ id: crypto.randomUUID(), text, selected: false }))
   );
   const [history, setHistory] = useState<ListItem[][]>([]);
 
@@ -18,21 +17,20 @@ export function useItemList(initialTexts: string[]) {
     setItems(nextItems);
   };
 
-  const addItem = (text: string) => {
+  const addItem = (text: string): void => {
     const clean = text.trim();
-    if (!clean) return false;
-    commit([...items, { id: nextId.current++, text: clean, selected: false }]);
-    return true;
+    if (!clean) return;
+    commit([...items, { id: crypto.randomUUID(), text: clean, selected: false }]);
   };
 
-  const toggleItem = (id: number) =>
+  const toggleItem = (id: string) =>
     setItems((prev) => prev.map((i) => (i.id === id ? { ...i, selected: !i.selected } : i)));
 
   const deleteSelected = () => {
     if (items.some((i) => i.selected)) commit(items.filter((i) => !i.selected));
   };
 
-  const deleteItem = (id: number) => {
+  const deleteItem = (id: string) => {
     const nextItems = items.filter((i) => i.id !== id);
     if (nextItems.length !== items.length) commit(nextItems);
   };
