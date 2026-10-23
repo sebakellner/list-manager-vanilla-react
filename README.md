@@ -55,17 +55,59 @@ pnpm typecheck
 pnpm build
 ```
 
-`typecheck` checks the React application and Vite configuration in strict
-TypeScript mode. `build` runs that check and generates the React production
-bundle in `react/dist/`, including the shared stylesheet.
+`typecheck` checks the React application, Vite configuration, and shared
+Playwright configuration and tests in strict TypeScript mode. `build` checks
+the React package and generates its production bundle in `react/dist/`,
+including the shared stylesheet.
 
 Vanilla has no runtime dependencies or build step. For static deployment, keep
 the `vanilla/` and `shared/` directories alongside each other.
+
+### React tests
+
+Run tests from the repository root:
+
+```bash
+pnpm test:unit
+pnpm test:unit:coverage
+```
+
+### End-to-end tests
+
+Install Playwright's Chromium browser once after installing dependencies:
+
+```bash
+pnpm exec playwright install chromium
+```
+
+Run the shared browser tests against both React and Vanilla:
+
+```bash
+pnpm test:e2e
+```
+
+To run only one implementation:
+
+```bash
+pnpm test:e2e:react
+pnpm test:e2e:vanilla
+```
+
+Playwright starts and stops its own React Vite server at
+`http://127.0.0.1:4173/` and Vanilla static server at
+`http://127.0.0.1:4174/vanilla/`. Keep both ports free; no separate development
+servers are needed.
+Browser tests live in [tests/e2e/](./tests/e2e/) and run separately from Vitest.
+Each case runs once per implementation in Chromium. The configuration lives
+in [playwright.config.ts](./playwright.config.ts), and failed tests retain
+traces in `test-results/`.
+For headed mode, run `pnpm test:e2e --headed`.
 
 ## Project structure
 
 - [vanilla/](./vanilla/): HTML and JavaScript modules for state, rendering, and events.
 - [react/src/](./react/src/): React components and the typed list-state hook.
+- [tests/e2e/](./tests/e2e/): shared browser tests for React and Vanilla.
 - [shared/styles.css](./shared/styles.css): shared layout, styles, and CSS design tokens.
 - Root package: workspace commands and the Vanilla development server.
 
