@@ -1,7 +1,7 @@
 # Text List Manager
 
 A front-end coding challenge implemented in **Vanilla JavaScript** and
-**React + TypeScript**, with the same functionality and shared styles.
+**React 19 + TypeScript**, with the same functionality and shared styles.
 
 ## Preview
 
