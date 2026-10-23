@@ -36,7 +36,6 @@ export default function AddModal({ onAdd, onClose }: AddModalProps) {
   };
 
   const preventDuplicateSubmit = (e: SubmitEvent<HTMLFormElement>) => {
-    // Block repeated events before React renders the pending state.
     if (submittingRef.current || !dialogRef.current?.open || !text.trim()) {
       e.preventDefault();
       return;
@@ -64,7 +63,11 @@ export default function AddModal({ onAdd, onClose }: AddModalProps) {
       }}
     >
       <div className="modal">
-        <form action={handleSubmit} onSubmit={preventDuplicateSubmit} autoComplete="off">
+        <form
+          action={handleSubmit}
+          onSubmit={preventDuplicateSubmit}
+          autoComplete="off"
+        >
           <label id="modal-title" className="modal__title" htmlFor="item-input">
             Add item to list
           </label>
