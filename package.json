@@ -6,9 +6,17 @@
     "dev:vanilla": "serve . --config serve.json --listen tcp://127.0.0.1:3000 --no-clipboard",
     "dev:react": "pnpm --filter technical-proof-react dev",
     "build": "pnpm --filter technical-proof-react build",
-    "typecheck": "pnpm --filter technical-proof-react typecheck"
+    "typecheck": "pnpm --filter technical-proof-react typecheck && tsc --project tsconfig.e2e.json",
+    "test:unit": "pnpm --filter technical-proof-react test:unit",
+    "test:unit:coverage": "pnpm --filter technical-proof-react test:unit --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:react": "playwright test --project=react-chromium",
+    "test:e2e:vanilla": "playwright test --project=vanilla-chromium"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.3",
     "serve": "^14.2.4"
   }
 }
