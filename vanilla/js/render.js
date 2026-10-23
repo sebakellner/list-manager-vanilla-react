@@ -1,10 +1,12 @@
 export function renderList(listEl, items) {
   // Conserva los nodos para no interrumpir el doble clic ni perder el foco.
   const existing = new Map(
-    Array.from(listEl.children, (li) => [Number(li.dataset.id), li]),
+    Array.from(listEl.children, function getItemEntry(li) {
+      return [li.dataset.id, li];
+    }),
   );
 
-  items.forEach((item, index) => {
+  items.forEach(function updateItemNode(item, index) {
     let li = existing.get(item.id);
     if (!li) {
       li = document.createElement("li");
@@ -21,7 +23,9 @@ export function renderList(listEl, items) {
     existing.delete(item.id);
   });
 
-  existing.forEach((li) => li.remove());
+  existing.forEach(function removeObsoleteNode(li) {
+    li.remove();
+  });
 }
 
 export function renderControls(
