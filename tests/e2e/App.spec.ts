@@ -65,4 +65,31 @@ test.describe("App", () => {
     await expect(list.getByRole("option")).toHaveCount(4);
     await expect(undoButton).toBeDisabled();
   });
+
+  test("should add only one item on double click and allow adding after reopening", async ({ page }) => {
+    const { list, addButton, undoButton, dialog } = await setup(page);
+    const text = "Single addition";
+    const addedItem = list.getByRole("option", { name: text, exact: true });
+
+    await addButton.click();
+    await dialog.getByRole("textbox").fill(text);
+    await dialog.getByRole("button", { name: "Add", exact: true }).dblclick();
+
+    await expect(dialog).not.toBeVisible();
+    await expect(addedItem).toHaveCount(1);
+    await expect(list.getByRole("option")).toHaveCount(5);
+
+    await undoButton.click();
+    await expect(addedItem).toHaveCount(0);
+    await expect(undoButton).toBeDisabled();
+
+    await addButton.click();
+    const input = dialog.getByRole("textbox");
+    await expect(input).toHaveValue("");
+    await input.fill(text);
+    await input.press("Enter");
+
+    await expect(addedItem).toHaveCount(1);
+    await expect(list.getByRole("option")).toHaveCount(5);
+  });
 });

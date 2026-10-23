@@ -18,6 +18,7 @@ const form = $("#add-form");
 const input = $("#item-input");
 const confirmBtn = $("#confirm-btn");
 const cancelBtn = $("#cancel-btn");
+let isSubmitting = false;
 
 function render() {
   const state = getState();
@@ -84,14 +85,23 @@ overlay.addEventListener("cancel", (event) => {
   closeModal();
 });
 input.addEventListener("input", () => {
-  confirmBtn.disabled = input.value.trim() === "";
+  confirmBtn.disabled = isSubmitting || input.value.trim() === "";
 });
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
-  if (addItem(input.value)) {
-    render();
-    closeModal();
+  if (isSubmitting || !overlay.open) return;
+
+  isSubmitting = true;
+  confirmBtn.disabled = true;
+  try {
+    if (addItem(input.value)) {
+      render();
+      closeModal();
+    }
+  } finally {
+    isSubmitting = false;
+    confirmBtn.disabled = !overlay.open || input.value.trim() === "";
   }
 });
 

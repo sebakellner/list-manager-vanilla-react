@@ -1,15 +1,27 @@
 import { useEffect, useRef, useState } from "react";
-import type { FormEvent } from "react";
+import type { SubmitEvent } from "react";
+import { useFormStatus } from "react-dom";
 import Button from "./Button";
 
 interface AddModalProps {
-  onAdd: (text: string) => boolean;
+  onAdd: (text: string) => boolean | Promise<boolean>;
   onClose: () => void;
+}
+
+function SubmitButton({ disabled }: { disabled: boolean }) {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button variant="primary" type="submit" disabled={disabled} busy={pending}>
+      Add
+    </Button>
+  );
 }
 
 export default function AddModal({ onAdd, onClose }: AddModalProps) {
   const [text, setText] = useState("");
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const submittingRef = useRef(false);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -23,9 +35,21 @@ export default function AddModal({ onAdd, onClose }: AddModalProps) {
     onClose();
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (onAdd(text)) closeModal();
+  const preventDuplicateSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+    // Block repeated events before React renders the pending state.
+    if (submittingRef.current || !dialogRef.current?.open || !text.trim()) {
+      e.preventDefault();
+      return;
+    }
+    submittingRef.current = true;
+  };
+
+  const handleSubmit = async () => {
+    try {
+      if ((await onAdd(text)) && dialogRef.current?.open) closeModal();
+    } finally {
+      submittingRef.current = false;
+    }
   };
 
   return (
@@ -40,7 +64,7 @@ export default function AddModal({ onAdd, onClose }: AddModalProps) {
       }}
     >
       <div className="modal">
-        <form onSubmit={handleSubmit} autoComplete="off">
+        <form action={handleSubmit} onSubmit={preventDuplicateSubmit} autoComplete="off">
           <label id="modal-title" className="modal__title" htmlFor="item-input">
             Add item to list
           </label>
@@ -54,13 +78,7 @@ export default function AddModal({ onAdd, onClose }: AddModalProps) {
             autoFocus
           />
           <div className="modal__actions">
-            <Button
-              variant="primary"
-              type="submit"
-              disabled={text.trim() === ""}
-            >
-              Add
-            </Button>
+            <SubmitButton disabled={text.trim() === ""} />
             <Button onClick={closeModal}>Cancel</Button>
           </div>
         </form>
