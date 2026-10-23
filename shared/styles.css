@@ -222,6 +222,26 @@ h1 {
   opacity: 0.4;
   cursor: not-allowed;
 }
+.btn[aria-busy="true"] {
+  position: relative;
+}
+.btn__content--busy {
+  opacity: 0;
+}
+.btn__spinner {
+  position: absolute;
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: btn-spin 800ms linear infinite;
+}
+@keyframes btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 .btn:not(.btn--primary):not(:disabled):hover {
   background: var(--color-button-outline-hover);
 }
@@ -325,5 +345,8 @@ h1 {
   :root {
     --motion-duration-fast: 0ms;
     --motion-duration-normal: 0ms;
+  }
+  .btn__spinner {
+    animation: none;
   }
 }

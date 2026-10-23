@@ -12,6 +12,7 @@ A front-end coding challenge implemented in **Vanilla JavaScript** and
 
 - Add entries through a modal, using the Add button or Enter.
 - Reject empty or whitespace-only entries and trim surrounding whitespace.
+- Disable Add during submission and guard against repeated form submissions.
 - Select or deselect multiple items.
 - Delete selected items, or remove an individual item with a double-click.
 - Undo additions and deletions through the full session history.
@@ -121,7 +122,15 @@ For headed mode, run `pnpm test:e2e --headed`.
 - **Rendering:** Vanilla reuses list nodes to preserve focus and double-click
   behavior. Text is rendered with `textContent`; React uses its default escaping.
 - **React components:** a reusable Button supports outline, primary, and icon
-  variants while forwarding native button props and refs.
+  variants while forwarding native button props and refs. Its `busy` prop
+  disables interaction and shows a loading indicator with `aria-busy`, preserving
+  the accessible name and button dimensions. The indicator respects reduced motion.
+- **Form submission:** React uses a Form Action and `useFormStatus` to disable
+  Add while pending through a small SubmitButton inside the form, plus a ref
+  guard for repeated submit events. Vanilla
+  disables Add and guards its synchronous submit handler with a flag.
+  Rejected additions leave the dialog open for another attempt; no artificial
+  delays are introduced.
 - **Design:** CSS tokens group colors, typography, spacing, radii, shadows,
   dimensions, and motion durations/easing. Desktop measurements follow XD;
   smaller screens and enlarged text can expand the layout without fixing the
